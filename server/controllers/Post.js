@@ -5,21 +5,19 @@ const { Post } = models;
 const homePage = async (req, res) => res.render('app');
 
 const makePost = async (req, res) => {
-  if (!req.body.name || !req.body.age || !req.body.level) {
-    return res.status(400).json({ error: 'All fields are required!' });
+  if (!req.body.content) {
+    return res.status(400).json({ error: 'Content is required!' });
   }
 
   const postData = {
-    name: req.body.name,
-    age: req.body.age,
-    level: req.body.level,
+    content: req.body.content,
     owner: req.session.account._id,
   };
 
   try {
     const newPost = new Post(postData);
     await newPost.save();
-    return res.status(201).json({ name: newPost.name, age: newPost.age, level: newPost.level });
+    return res.status(201).json({ content: newPost.content });
   } catch (err) {
     console.log(err);
     if (err.code === 11000) {
@@ -33,7 +31,7 @@ const makePost = async (req, res) => {
 const getPosts = async (req, res) => {
   try {
     const query = { owner: req.session.account._id };
-    const docs = await Post.find(query).select('name age level').lean().exec();
+    const docs = await Post.find(query).populate('owner', 'username').select('content likes').lean().exec();
 
     return res.json({ posts: docs });
   } catch (err) {

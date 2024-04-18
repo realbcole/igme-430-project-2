@@ -92,6 +92,39 @@ body {
     }
 }
 
+$sidebarWidth: 300px;
+
+.sidebar {
+    width: $sidebarWidth;
+    height: 100%;
+    background-color: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2em;
+        margin: 10px 0;
+    }
+}
+
+.main-area {
+    width: calc(100% - $sidebarWidth);
+    height: 100%;
+    background-color: #f7f7f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: $sidebarWidth;
+}
+
 .PostForm {
     border: 2px solid #338acc;
     height: 35px;
@@ -171,19 +204,6 @@ body {
     left: 20px;
 }
 
-#speech {
-    height: 120px;
-    width: 250px;
-    z-index: 300;
-}
-
-#errorMessage {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: red;
-    font-style: italic;
-}
-
 #post {
     z-index: 225;
     margin-top: -20px;
@@ -225,16 +245,6 @@ body {
     background-color: #66bfff;
 }
 
-img.postFace {
-    margin-left: 25px;
-    margin-right: 10px;
-    height: 50px;
-    width: 50px;
-    border-radius: 4px;
-    margin-top: 10px;
-    float: left;
-}
-
 h3.emptyPost {
     width: 400px;
     font-size: 1.5em;
@@ -247,22 +257,6 @@ h3.postName {
     width: 200px;
     font-weight: bold;
     padding-left: 65px;
-    font-size: 1.5em;
-}
-
-h3.postAge {
-    text-align: left;
-    width: 100px;
-    font-weight: bold;
-    padding-right: 40px;
-    font-size: 1.5em;
-}
-
-h3.postLevel {
-    text-align: left;
-    width: 100px;
-    font-weight: bold;
-    padding-right: 40px;
     font-size: 1.5em;
 }
 

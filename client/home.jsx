@@ -7,16 +7,14 @@ const { createRoot } = require('react-dom/client');
 const handlePost = (e, onPostAdded) => {
     e.preventDefault();
 
-    const name = e.target.querySelector('#postName').value;
-    const age = e.target.querySelector('#postAge').value;
-    const level = e.target.querySelector('#postLevel').value;
+    const content = e.target.querySelector('#postContent').value;
 
-    if (!name || !age || !level) {
-        helper.handleError('All fields are required!');
+    if (!content) {
+        helper.handleError('Content is required!');
         return false;
     }
 
-    helper.sendPost(e.target.action, { name, age, level }, onPostAdded);
+    helper.sendPost(e.target.action, { content }, onPostAdded);
     return false;
 };
 
@@ -25,16 +23,11 @@ const PostForm = props => {
         <form id="postForm"
             onSubmit={(e) => handlePost(e, props.triggerReload)}
             name="postForm"
-            action="/maker"
+            action="/post"
             method="POST"
             className="postForm"
         >
-            <label htmlFor="name">Name: </label>
-            <input id="postName" type="text" name="name" placeholder="Post Name" />
-            <label htmlFor="age">Age: </label>
-            <input id="postAge" type="number" min="0" name="age" />
-            <label htmlFor="level">Level: </label>
-            <input id="postLevel" type="number" min="0" name="level" />
+            <input id="postContent" type="text" name="content" placeholder="Post Content" />
             <input className="makePostSubmit" type="submit" value="Make Post" />
         </form>
     );
@@ -48,6 +41,7 @@ const PostList = props => {
         const loadPostsFromServer = async () => {
             const response = await fetch('/getPosts');
             const data = await response.json();
+            console.log(data.posts);
             setPosts(data.posts);
         };
         loadPostsFromServer();
@@ -79,10 +73,10 @@ const PostList = props => {
     const postNodes = posts.map(post => {
         return (
             <div key={post.id} className="post">
-                <h3 className="postName">Name: {post.name}</h3>
-                <h3 className="postAge">Age: {post.age}</h3>
-                <h3 className="postLevel">Level: {post.level}</h3>
-                <button className="deletePost" onClick={() => deletePost(post._id)}>Delete</button>
+                <h3 className="postName">Posted By {post.owner.username}</h3>
+                <h3 className="postContent">{post.content}</h3>
+                {/* Only show delete button on profile page */}
+                {/* <button className="deletePost" onClick={() => deletePost(post._id)}>Delete</button> */}
             </div>
         );
     });
@@ -94,16 +88,29 @@ const PostList = props => {
     );
 };
 
+const Sidebar = () => {
+    return (
+        <div className="sidebar">
+            <a href="/home">Home</a>
+            <a>Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    );
+}
+
 const App = () => {
     const [reloadPosts, setReloadPosts] = useState(false);
 
     return (
         <div>
-            <div id="makePost">
-                <PostForm triggerReload={() => setReloadPosts(!reloadPosts)} />
-            </div>
-            <div id="posts">
-                <PostList posts={[]} reloadPosts={reloadPosts} />
+            <Sidebar />
+            <div className="main-area">
+                <div id="makePost">
+                    <PostForm triggerReload={() => setReloadPosts(!reloadPosts)} />
+                </div>
+                <div id="posts">
+                    <PostList posts={[]} reloadPosts={reloadPosts} />
+                </div>
             </div>
         </div>
     );

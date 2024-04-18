@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const _ = require('underscore');
 
-const setContent = (name) => _.escape(name).trim();
+const setContent = (s) => _.escape(s).trim();
 
 const PostSchema = new mongoose.Schema({
   owner: {
@@ -14,7 +14,10 @@ const PostSchema = new mongoose.Schema({
     required: true,
     set: setContent,
   },
-  // need to add likes and comments
+  likes: {
+    type: Number,
+    default: 0,
+  },
   createdDate: {
     type: Date,
     default: Date.now,
@@ -22,9 +25,10 @@ const PostSchema = new mongoose.Schema({
 });
 
 PostSchema.statics.toAPI = (doc) => ({
-  name: doc.name,
-  age: doc.age,
-  level: doc.level,
+  owner: doc.owner,
+  content: doc.content,
+  likes: doc.likes,
+  createdDate: doc.createdDate,
 });
 
 const PostModel = mongoose.model('Post', PostSchema);
