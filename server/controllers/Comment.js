@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const { Comment, Post } = models;
+const { Comment } = models;
 
 const makeComment = async (req, res) => {
     if (!req.body.comment) {
