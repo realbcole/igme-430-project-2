@@ -28,12 +28,46 @@ const makePost = async (req, res) => {
   }
 };
 
+const likePost = async (req, res) => {
+  try {
+    const postId = req.body.postId;
+    const userId = req.session.account._id;
+
+    const post = await Post.findById(postId);
+    const likesIndex = post.likes.indexOf(userId);
+
+    if (likesIndex === -1) {
+      post.likes.push(userId);
+    } else {
+      post.likes.splice(likesIndex, 1);
+    }
+
+    await post.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Error liking post!' });
+  }
+};
+
 const getPosts = async (req, res) => {
   try {
-    const query = { owner: req.session.account._id };
-    const docs = await Post.find(query).populate('owner', 'username').select('content likes').lean().exec();
+    const docs = await Post.find().populate('owner', 'username').select('content likes createdDate').sort('-createdDate').lean().exec();
 
-    return res.json({ posts: docs });
+    return res.json({ posts: docs, user: req.session.account });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error retrieving posts!' });
+  }
+};
+
+const getUserPosts = async (req, res) => {
+  try {
+    const query = { owner: req.session.account._id };
+    const docs = await Post.find(query).populate('owner', 'username').select('content likes createdDate').sort('-createdDate').lean().exec();
+
+    return res.json({ posts: docs, user: req.session.account });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: 'Error retrieving posts!' });
@@ -57,6 +91,8 @@ const deletePost = async (req, res) => {
 module.exports = {
   homePage,
   makePost,
+  likePost,
   getPosts,
+  getUserPosts,
   deletePost,
 };

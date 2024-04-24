@@ -10,12 +10,26 @@ const handlePost = (e, onPostAdded) => {
     const content = e.target.querySelector('#postContent').value;
 
     if (!content) {
-        helper.handleError('Content is required!');
+        helper.handleNotification('Content is required!');
         return false;
     }
 
     helper.sendPost(e.target.action, { content }, onPostAdded);
     return false;
+};
+
+const formatPost = (post, currentUser) => {
+    const date = new Date(post.createdDate);
+    const formattedDate = new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'long',
+        timeStyle: 'short'
+    }).format(date);
+    post.formattedDate = formattedDate;
+
+    const userHasLiked = post.likes.includes(currentUser._id);
+    post.userHasLiked = userHasLiked;
+
+    return post;
 };
 
 const PostForm = props => {
@@ -27,7 +41,7 @@ const PostForm = props => {
             method="POST"
             className="postForm"
         >
-            <input id="postContent" type="text" name="content" placeholder="Post Content" />
+            <input className="postInput" id="postContent" type="text" name="content" placeholder="Post Content" />
             <input className="makePostSubmit" type="submit" value="Make Post" />
         </form>
     );
@@ -35,32 +49,19 @@ const PostForm = props => {
 
 const PostList = props => {
     const [posts, setPosts] = useState(props.posts);
-    const [postDeleted, setPostDeleted] = useState(false);
+    const [refreshPosts, setRefreshPosts] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
     useEffect(() => {
         const loadPostsFromServer = async () => {
             const response = await fetch('/getPosts');
             const data = await response.json();
-            console.log(data.posts);
+            console.log(data);
+            setCurrentUser(data.user);
             setPosts(data.posts);
         };
         loadPostsFromServer();
-    }, [props.reloadPosts, postDeleted]);
-
-    const deletePost = async (id) => {
-        const response = await fetch('/deletePost', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id }),
-        });
-
-        if (response.status === 204) {
-            helper.handleError('Post deleted!');
-            setPostDeleted(!postDeleted);
-        }
-    };
+    }, [props.reloadPosts, refreshPosts]);
 
     if (posts.length === 0) {
         return (
@@ -71,14 +72,9 @@ const PostList = props => {
     }
 
     const postNodes = posts.map(post => {
-        return (
-            <div key={post.id} className="post">
-                <h3 className="postName">Posted By {post.owner.username}</h3>
-                <h3 className="postContent">{post.content}</h3>
-                {/* Only show delete button on profile page */}
-                {/* <button className="deletePost" onClick={() => deletePost(post._id)}>Delete</button> */}
-            </div>
-        );
+        const formattedPost = formatPost(post, currentUser);
+
+        return <Post post={formattedPost} currentUser={currentUser} setRefreshPosts={setRefreshPosts} refreshPosts={refreshPosts} />
     });
 
     return (
@@ -88,11 +84,108 @@ const PostList = props => {
     );
 };
 
-const Sidebar = () => {
+const Post = props => {
+    const { post, currentUser, setRefreshPosts, refreshPosts } = props;
+
+    const likePost = async (postId) => {
+        try {
+            await helper.sendPost('/likePost', { postId });
+            setRefreshPosts(!refreshPosts);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const deletePost = async (id) => {
+        await helper.sendDelete('/deletePost', { id }, (res) => {
+            if (res.status === 204) {
+                helper.handleNotification('Post deleted!', 'success');
+                setRefreshPosts(!refreshPosts);
+            }
+        });
+    };
+
+    return (
+        <div key={post.id} className="post">
+            <div className="top-row">
+                <span className="postName">{post.owner.username}</span>
+                <span className="postDate">{post.formattedDate}</span>
+                {post.owner._id === currentUser._id ?
+                    <button className="deletePost" onClick={() => deletePost(post._id)}>
+                        <i id="outline" class="fa-regular fa-trash-can"></i>
+                        <i id="solid" class="fa-solid fa-trash-can"></i>
+                    </button> : null
+                }
+            </div>
+
+            <span className="postContent">{post.content}</span>
+
+            <div className="bottom-row">
+                <button className="likePost" onClick={() => likePost(post._id)}>
+                    {post.userHasLiked ? (
+                        <i class="fa-solid fa-heart"></i>
+                    ) : (
+                        <>
+                            <i id="outline" class="fa-regular fa-heart"></i>
+                            <i id="solid" class="fa-solid fa-heart"></i>
+                        </>
+                    )}
+                </button>
+                <span className="postLikes">{post.likes.length}</span>
+            </div>
+        </div>
+    );
+}
+
+const Profile = props => {
+    const [posts, setPosts] = useState(props.posts);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [refreshPosts, setRefreshPosts] = useState(false);
+
+    useEffect(() => {
+        const loadPostsFromServer = async () => {
+            const response = await fetch('/getUserPosts');
+            const data = await response.json();
+            setCurrentUser(data.user);
+            setPosts(data.posts);
+        };
+        loadPostsFromServer();
+    }, [refreshPosts]);
+
+    if (posts.length === 0) {
+        return (
+            <div className="postList">
+                <h3 className="emptyPost">No Posts Yet!</h3>
+            </div>
+        );
+    }
+
+    const postNodes = posts.map(post => {
+        const formattedPost = formatPost(post, currentUser);
+
+        return <Post post={formattedPost} currentUser={currentUser} setRefreshPosts={setRefreshPosts} refreshPosts={refreshPosts} />
+    });
+
+    return (
+        <div>
+            <h1>{currentUser.username}'s Profile</h1>
+            <div className="postList">
+                {postNodes}
+            </div>
+        </div>
+    );
+};
+
+const Sidebar = props => {
+    const handleClick = (e) => {
+        e.preventDefault();
+        props.setCurrentPage(e.target.textContent.toLowerCase());
+    };
+
     return (
         <div className="sidebar">
-            <a href="/home">Home</a>
-            <a>Profile</a>
+            <a onClick={handleClick}>Home</a>
+            <a onClick={handleClick}>Profile</a>
             <a href="/logout">Logout</a>
         </div>
     );
@@ -100,17 +193,25 @@ const Sidebar = () => {
 
 const App = () => {
     const [reloadPosts, setReloadPosts] = useState(false);
+    const [currentPage, setCurrentPage] = useState('home');
 
     return (
         <div>
-            <Sidebar />
+            <Sidebar setCurrentPage={setCurrentPage} />
             <div className="main-area">
-                <div id="makePost">
-                    <PostForm triggerReload={() => setReloadPosts(!reloadPosts)} />
-                </div>
-                <div id="posts">
-                    <PostList posts={[]} reloadPosts={reloadPosts} />
-                </div>
+                {currentPage === 'home' ?
+                    <>
+                        <div id="makePost">
+                            <PostForm triggerReload={() => setReloadPosts(!reloadPosts)} />
+                        </div>
+                        <div id="posts">
+                            <PostList posts={[]} reloadPosts={reloadPosts} />
+                        </div>
+                    </>
+                    :
+                    <Profile posts={[]} />
+                }
+
             </div>
         </div>
     );

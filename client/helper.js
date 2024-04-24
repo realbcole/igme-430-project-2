@@ -4,12 +4,19 @@ const toastr = require("toastr");
    displays it to the user. Will be hidden by other events that could
    end in an error.
 */
-const handleError = (message) => {
+const handleNotification = (message, type = "error") => {
     toastr.options = {
         "positionClass": "toast-bottom-right", // Position of toastr notification
         "preventDuplicates": true, // Prevent duplicate notifications
     };
-    toastr.error(message);
+
+    if (type === 'success') {
+        toastr.success(message);
+        return;
+    } else if (type === 'error') {
+        toastr.error(message);
+        return;
+    }
 };
 
 /* Sends post requests to the server using fetch. Will look for various
@@ -31,7 +38,7 @@ const sendPost = async (url, data, handler) => {
     }
 
     if (result.error) {
-        handleError(result.error);
+        handleNotification(result.error);
     }
 
     if (handler) {
@@ -39,7 +46,22 @@ const sendPost = async (url, data, handler) => {
     }
 };
 
+const sendDelete = async (url, data, handler) => {
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (handler) {
+        handler(response);
+    }
+};
+
 module.exports = {
-    handleError,
+    handleNotification,
     sendPost,
+    sendDelete,
 };

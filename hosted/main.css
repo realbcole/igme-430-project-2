@@ -326,6 +326,7 @@ body {
   text-decoration: none;
   font-size: 1.2em;
   margin: 10px 0;
+  cursor: pointer;
 }
 
 .main-area {
@@ -335,21 +336,23 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 2rem;
   margin-left: 300px;
 }
 
+#makePost {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .PostForm {
-  border: 2px solid #338acc;
-  height: 35px;
-  width: fit-content;
   margin-top: 0px;
   padding-top: 10px;
-  background-color: #55acee;
   border-bottom-right-radius: 4px;
   border-top-right-radius: 4px;
 }
-
 .PostForm label {
   display: inline-block;
   width: 75px;
@@ -357,28 +360,27 @@ body {
   font-size: 1.2em;
   color: white;
 }
-
-.makePostSubmit {
+.PostForm .postInput {
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+.PostForm .makePostSubmit {
   transition: background-color 0.4s ease;
   display: inline;
-  width: 90px;
-  background-color: #55acee;
-  border-radius: 2px;
+  background-color: black;
+  border-radius: 4px;
   color: white;
-  text-decoration: none;
   margin-left: 10px;
 }
-
-.makePostSubmit:link,
-.makePostSubmit:visited,
-.makePostSubmit:hover,
-.makePostSubmit:active {
+.PostForm .makePostSubmit:link,
+.PostForm .makePostSubmit:visited,
+.PostForm .makePostSubmit:hover,
+.PostForm .makePostSubmit:active {
   color: white;
 }
-
-.makePostSubmit:hover {
+.PostForm .makePostSubmit:hover {
   transition: background-color 0.4s ease;
-  background-color: #338acc;
+  background-color: gray;
 }
 
 #user,
@@ -432,7 +434,6 @@ body {
 #posts {
   width: fit-content;
   min-width: 400px;
-  border: 2px solid #55acee;
   border-radius: 4px;
   margin: 0 auto;
   margin-top: 100px;
@@ -443,35 +444,89 @@ body {
   margin: 0 auto;
   margin-top: 2px;
   margin-bottom: 2px;
-  border: 2px solid #55acee;
-  border-radius: 4px;
-  background-color: #55acee;
+  border: 2px solid black;
+  background-color: black;
+  border-radius: 8px;
   padding: 10px;
   min-height: 60px;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-
-.post:hover {
-  transition: border-color 0.2s ease-out;
-  border-color: rgba(255, 255, 255, 0.8);
-  transition: background-color 2.6s ease-out;
-  background-color: #66bfff;
+.post .top-row {
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
 }
-
-h3.emptyPost {
-  width: 400px;
-  font-size: 1.5em;
-  margin: 0 auto;
-  text-align: center;
-  margin-top: 18px;
-}
-
-h3.postName {
-  width: 200px;
+.post .top-row .postName {
   font-weight: bold;
-  padding-left: 65px;
   font-size: 1.5em;
+  color: white;
+}
+.post .top-row .postDate {
+  font-size: 0.8em;
+  color: #d3d3d3;
+  margin-bottom: 4px;
+}
+.post .top-row .deletePost {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  margin-left: auto;
+  margin-bottom: 6px;
+}
+.post .top-row .deletePost i {
+  color: white;
+  font-size: 1.2em;
+}
+.post .top-row .deletePost #outline {
+  display: block;
+}
+.post .top-row .deletePost #solid {
+  display: none;
+}
+.post .top-row .deletePost:hover #outline {
+  display: none;
+}
+.post .top-row .deletePost:hover #solid {
+  display: block;
+}
+.post .postContent {
+  font-size: 1.2em;
+  color: white;
+}
+.post .bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.post .bottom-row .likePost {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.post .bottom-row .likePost i {
+  color: white;
+  font-size: 1.5em;
+}
+.post .bottom-row .likePost #outline {
+  display: block;
+}
+.post .bottom-row .likePost #solid {
+  display: none;
+}
+.post .bottom-row .likePost:hover #outline {
+  display: none;
+}
+.post .bottom-row .likePost:hover #solid {
+  display: block;
+}
+.post .bottom-row .postLikes {
+  font-size: 1em;
+  color: white;
 }
 
 .post:first-child {

@@ -14,10 +14,10 @@ const PostSchema = new mongoose.Schema({
     required: true,
     set: setContent,
   },
-  likes: {
-    type: Number,
-    default: 0,
-  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account',
+  }],
   createdDate: {
     type: Date,
     default: Date.now,

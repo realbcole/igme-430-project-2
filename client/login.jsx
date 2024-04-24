@@ -9,7 +9,7 @@ const handleLogin = e => {
     const pass = e.target.querySelector('#pass').value;
 
     if (!username || !pass) {
-        helper.handleError('Username or password is empty!');
+        helper.handleNotification('Username or password is empty!');
         return false;
     }
 
@@ -25,12 +25,12 @@ const handleSignup = e => {
     const pass2 = e.target.querySelector('#pass2').value;
 
     if (!username || !pass || !pass2) {
-        helper.handleError('All fields are required!');
+        helper.handleNotification('All fields are required!');
         return false;
     }
 
     if (pass !== pass2) {
-        helper.handleError('Passwords do not match!');
+        helper.handleNotification('Passwords do not match!');
         return false;
     }
 
