@@ -1,8 +1,7 @@
 const toastr = require("toastr");
 
-/* Takes in an error message. Sets the error message up in html, and
-   displays it to the user. Will be hidden by other events that could
-   end in an error.
+/* Takes in a message. Sets the notification message up in html, and
+   displays it to the user.
 */
 const handleNotification = (message, type = "error") => {
     toastr.options = {
@@ -46,6 +45,26 @@ const sendPost = async (url, data, handler) => {
     }
 };
 
+/* Sends put requests to the server using fetch. Will look for various entries
+    in the response JSON object, and will handle them appropriately.
+*/
+const sendPut = async (url, data, handler) => {
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (handler) {
+        handler(response);
+    }
+};
+
+/* Sends delete requests to the server using fetch. Will look for various entries
+    in the response JSON object, and will handle them appropriately.
+*/
 const sendDelete = async (url, data, handler) => {
     const response = await fetch(url, {
         method: 'DELETE',
@@ -63,5 +82,6 @@ const sendDelete = async (url, data, handler) => {
 module.exports = {
     handleNotification,
     sendPost,
+    sendPut,
     sendDelete,
 };

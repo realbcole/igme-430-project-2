@@ -1,7 +1,7 @@
 {
   "name": "twitter-clone",
   "version": "1.0.0",
-  "description": "A Simple Login Example using Node.js, Mongo and Redis",
+  "description": "A simple social media web app",
   "main": "./server/app.js",
   "scripts": {
     "webpack": "webpack",
@@ -20,7 +20,7 @@
     "Redis",
     "Login"
   ],
-  "author": "Cody Van De Mark / Austin Willoughby",
+  "author": "Brandon Cole",
   "license": "Apache 2.0",
   "devDependencies": {
     "@babel/core": "^7.24.3",

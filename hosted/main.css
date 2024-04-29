@@ -331,13 +331,30 @@ body {
 
 .main-area {
   width: calc(100% - 300px);
-  height: 100%;
+  min-height: 100%;
   background-color: #f7f7f7;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
+  box-sizing: border-box;
   margin-left: 300px;
+}
+
+.postList {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.postList .emptyPost {
+  font-size: 1.5em;
+  color: black;
+  margin-top: 20px;
+}
+
+.profile {
+  min-width: 400px;
 }
 
 #makePost {
@@ -381,6 +398,40 @@ body {
 .PostForm .makePostSubmit:hover {
   transition: background-color 0.4s ease;
   background-color: gray;
+}
+
+.settings h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+.settings h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+.settings .changePasswordForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.settings .changePasswordForm input {
+  width: 100%;
+  font-size: 1.1em;
+}
+.settings .changePasswordForm input[type=submit] {
+  width: 100%;
+  background-color: black;
+  color: white;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.settings .changePasswordForm input[type=submit]:hover {
+  background-color: #333;
+}
+.settings .changePasswordForm input[type=submit]:active {
+  background-color: #666;
 }
 
 #user,
@@ -436,7 +487,6 @@ body {
   min-width: 400px;
   border-radius: 4px;
   margin: 0 auto;
-  margin-top: 100px;
 }
 
 .post {

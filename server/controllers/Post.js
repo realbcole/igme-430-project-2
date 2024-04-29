@@ -2,9 +2,12 @@ const models = require('../models');
 
 const { Post } = models;
 
+// Render the app page
 const homePage = async (req, res) => res.render('app');
 
+// Create a new post
 const makePost = async (req, res) => {
+  // Check if the content is present
   if (!req.body.content) {
     return res.status(400).json({ error: 'Content is required!' });
   }
@@ -14,6 +17,7 @@ const makePost = async (req, res) => {
     owner: req.session.account._id,
   };
 
+  // Create a new post
   try {
     const newPost = new Post(postData);
     await newPost.save();
@@ -28,6 +32,7 @@ const makePost = async (req, res) => {
   }
 };
 
+// Like a post
 const likePost = async (req, res) => {
   try {
     const postId = req.body.postId;
@@ -36,9 +41,10 @@ const likePost = async (req, res) => {
     const post = await Post.findById(postId);
     const likesIndex = post.likes.indexOf(userId);
 
+    // If the user has not liked the post, add the like
     if (likesIndex === -1) {
       post.likes.push(userId);
-    } else {
+    } else { // If the user has liked the post, remove the like
       post.likes.splice(likesIndex, 1);
     }
 
@@ -51,6 +57,7 @@ const likePost = async (req, res) => {
   }
 };
 
+// Get all posts
 const getPosts = async (req, res) => {
   try {
     const docs = await Post.find().populate('owner', 'username').select('content likes createdDate').sort('-createdDate').lean().exec();
@@ -62,6 +69,7 @@ const getPosts = async (req, res) => {
   }
 };
 
+// Get all posts by a user
 const getUserPosts = async (req, res) => {
   try {
     const query = { owner: req.session.account._id };
@@ -74,6 +82,7 @@ const getUserPosts = async (req, res) => {
   }
 };
 
+// Delete a post
 const deletePost = async (req, res) => {
   if (!req.body.id) {
     return res.status(400).json({ error: 'An ID is required!' });

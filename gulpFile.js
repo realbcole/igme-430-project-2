@@ -5,6 +5,7 @@ const nodemon = require('gulp-nodemon');
 const eslint = require('gulp-eslint-new');
 const webpackConfig = require('./webpack.config.js');
 
+// Compile sass to css
 const sassTask = done => {
     gulp.src('./scss/main.scss') // Load file
         .pipe(sass().on('error', sass.logError)) // Convert to sass
@@ -13,6 +14,7 @@ const sassTask = done => {
     done();
 };
 
+// Compile js and jsx files
 const jsTask = done => {
     webpack(webpackConfig)
         .pipe(gulp.dest('./hosted/'));
@@ -20,6 +22,7 @@ const jsTask = done => {
     done();
 };
 
+// Lint js files
 const lintTask = done => {
     gulp.src('./server/**/*.js')
         .pipe(eslint({ fix: true }))
@@ -29,6 +32,7 @@ const lintTask = done => {
     done();
 };
 
+// Watch for changes
 const watch = done => {
     gulp.watch('./scss', sassTask);
     gulp.watch(['./client/**/*.js', './client/**/*.jsx'], jsTask);
