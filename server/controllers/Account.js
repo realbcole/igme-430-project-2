@@ -81,7 +81,7 @@ const changePassword = async (req, res) => {
   }
 
   // Authenticate the old password
-  return await Account.authenticate(account.username, oldPass, async (err, accountModel) => {
+  return Account.authenticate(account.username, oldPass, async (err, accountModel) => {
     if (err || !accountModel) {
       return res.status(401).json({ error: 'Wrong password!' });
     }
